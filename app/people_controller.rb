@@ -4,35 +4,46 @@ class PeopleController
   end
 
   def normalize
-    puts"-------------------"
-    puts @params
-    puts @params.keys.count
+    main_array=[]
     params.each_with_index do |file,idx|
+      break if idx==2
       puts idx
       rows = file[1].split("\n")
-      puts"_____________________"
-      puts rows
-      puts"_____________________"
       case file[0]
       when :dollar_format
-        rows.each do |row|
-          items = row.split(" $ ")
-          puts "................................."
-          puts items
-        end
-      # data = rows[0].split("&")
-      #
+        keys = rows.first.split(" $ ")
       when :percent_format
-        rows.each do |row|
-          items = row.split(" % ")
-          puts ":::::::::::::::::::::::::::::::::"
-          puts items
-        end
-      # p data
+        keys = rows.first.split(" % ")
       end
+      data_hash={}
+      rows.each_with_index do |row,i|
+        hash={}
+        next if i==0
+
+        case file[0]
+        when :dollar_format
+          items = row.split(" $ ")
+        when :percent_format
+          items = row.split(" % ")
+        end
+        items.each_with_index do |item,x|
+          hash[keys[x]]=item
+        end
+        data_hash[i] = hash
+      end
+      arr=[]
+      data_hash.each do |key, val|
+          arr[key-1]=[val["first_name"], val["city"], val["birthdate"]]
+      end
+      # arr.sort!
+      array= arr.map{|ar| ar.join(", ")}
+      # puts array.inspect
+      main_array<<array
       puts"************************************"
     end
-    puts"-------------------"
+    # main_array.sort!
+    xrr = main_array.map{|ar| ar.join(", ")}
+    puts"-------#{xrr.sort}------------"
 
   end
 
